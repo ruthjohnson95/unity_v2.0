@@ -1,0 +1,17 @@
+TRAIT 1: trait1
+TRAIT 2: trait2
+GWAS 1: /Users/ruthiejohnson/Development/unity_v2.0/sample_data/gwas1.txt
+GWAS 2: /Users/ruthiejohnson/Development/unity_v2.0/sample_data/gwas2.txt
+N1: 100000
+N2: 100000
+SNP HEAD: SNP
+FREQ HEAD: FREQ
+Z HEAD: Z 
+N HEAD: N_CASE 
+BP HEAD: BP
+MAF THRESH: 0.05
+LD WINDOW: 5000
+LDSC DIR: /Users/ruthiejohnson/Development/unity_v2.0/misc/ldsc
+HM3 PATH: /Users/ruthiejohnson/Development/unity_v2.0/misc/w_hm3.snplist
+REF LD PATH: /Users/ruthiejohnson/Development/unity_v2.0/misc/eur_w_ld_chr/
+SEED: 2018
