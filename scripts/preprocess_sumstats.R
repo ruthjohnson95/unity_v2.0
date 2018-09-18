@@ -44,7 +44,7 @@ filter_MAF <- function(gwas, freq_head, snp_head, THRESH){
 			loginfo("Did not find minor allele freq column...going to use maf from 1000G and match via rsid")
 
 			# list of SNP freq from 1000G
-			freq_table="../misc/all.chr.frq"
+			freq_table="misc/all.chr.frq"
 			maf_df <- fread(freq_table, header=T, showProgress=FALSE)
 			maf_df<-data.frame(maf_df$SNP, maf_df$MAF)
 			colnames(maf_df)<-c("SNP", "FREQ")

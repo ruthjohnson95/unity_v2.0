@@ -5,7 +5,7 @@ GWAS 2: /Users/ruthiejohnson/Development/unity_v2.0/sample_data/gwas2.txt
 N1: 100000
 N2: 100000
 SNP HEAD: SNP
-FREQ HEAD: FREQ
+FREQ HEAD: NA
 Z HEAD: Z 
 N HEAD: N_CASE 
 BP HEAD: BP
