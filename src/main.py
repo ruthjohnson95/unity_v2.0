@@ -45,7 +45,7 @@ def main():
     random.seed(seed)
     np.random.seed(seed)
 
-    # directory for log files 
+    # directory for log files
     outdir = options.outdir
 
     # get core experiment values
@@ -58,14 +58,14 @@ def main():
     ITS = int(options.ITS)
     particles = int(options.particles)
 
-    # if user provides known heritabilies and/or gen-corr and/or known proportions 
+    # if user provides known heritabilies and/or gen-corr and/or known proportions
     H1 = options.H1
     H2 = options.H2
     rho = options.rho
     A00 = options.A00
-    A10 = options.A10 
+    A10 = options.A10
     A01 = options.A01
-    A11 = options.A11 
+    A11 = options.A11
 
     if A00 is not None and A10 is not None and A01 is not None and A11 is not None:
         A00_true = float(A00)
@@ -73,11 +73,11 @@ def main():
         A01_true = float(A01)
         A11_true = float(A11)
     else:
-        # user did not provide known proportions 
-        A00_true = None 
+        # user did not provide known proportions
+        A00_true = None
         A10_true = None
-        A01_true = None 
-        A11_true = None 
+        A01_true = None
+        A11_true = None
 
     if H1 is not None:
         H1_true = float(H1)
@@ -93,10 +93,11 @@ def main():
 
     if rho is not None:
         rho_true = float(rho)
-        true_corr = rho_true 
+        true_corr = rho_true
     else:
         # user did not provide known gen corr
         rho_true = None
+        true_corr = None
 
 
     # simulate effect sizes
@@ -133,13 +134,13 @@ def main():
             exit(1)
 
         z1, z2, true_corr = simulate(A00_sim, A10_sim, A01_sim, A11_sim, H1_sim, H2_sim, rho_sim, rho_e_sim, M, N1, N2, Ns_sim, V)
-        
-        # save betas to files 
+
+        # save betas to files
         #print("Saving sumstats...")
         #np.savetxt("sumstats_1.txt", z1)
         #np.savetxt("sumstats_2.txt", z2)
 
-        print "True corr: %.4f" % true_corr 
+        print "True corr: %.4f" % true_corr
         if rho is not None:
             true_corr = rho_true
     else:
@@ -148,9 +149,9 @@ def main():
             sys.exit(0)
         else:
             z1, z2 = load_sumstats(file1, file2)
-            # find number of SNPS 
+            # find number of SNPS
             M = len(z1)
-            A00_sim = None 
+            A00_sim = None
             A10_sim = None
             A01_sim = None
             A11_sim = None
@@ -174,11 +175,15 @@ def main():
     # STEP 1: get estimates for H1, H2, and rho
 
     # no LD
-    if V is None and H1_true is None and H2_true is None and rho_true is None: # joint estimation  
+    if V is None and H1_true is None and H2_true is None and rho_true is None: # joint estimation
         p00_est, p10_est, p01_est, p11_est, H1_est, H2_est, rho_est, cov_e_coef_est \
             = initial_estimates(N1, N2, M, z1, z2, "L-BFGS-B")
-    elif V is None and H1_true is not None and H2_true is not None and rho_true is not None: 
-        print "Optimizing only p parameter..." 
+    elif V is None and H1_true is not None and H2_true is not None and rho_true is None:
+        print "Optimizing p and rho..."
+        p00_est, p10_est, p01_est, p11_est, H1_est, H2_est, rho_est, cov_e_coef_est \
+            = initial_estimates(N1, N2, M, z1, z2, "L-BFGS-B", H1=H1_true, H2=H2_true)
+    elif V is None and H1_true is not None and H2_true is not None and rho_true is not None:
+        print "Optimizing only p parameter..."
         p00_est, p10_est, p01_est, p11_est, H1_est, H2_est, rho_est, cov_e_coef_est \
             = initial_estimates(N1, N2, M, z1, z2, "L-BFGS-B", H1=H1_true, H2=H2_true, rho=rho_true)
     else: # there's LD
@@ -213,7 +218,7 @@ def main():
         try:
             true_MAP = log_p_pdf_fast(z1, z2, params, M, N1, N2)
         except:
-            print "error: cannot calculate posterior density due to non-pos-sem-def" 
+            print "error: cannot calculate posterior density due to non-pos-sem-def"
 
         true_log_like = log_likelihood(z1, z2, params, M, N1, N2)
 
@@ -268,37 +273,37 @@ def main():
     if H1_true is None:
         H1_0 = H1_est
     else:
-        H1_0 = H1_true 
+        H1_0 = H1_true
 
     if H2_true is None:
         H2_0 = H2_est
     else:
-        H2_0 = H2_true 
+        H2_0 = H2_true
 
     if rho_true is None:
         rho_0 = rho_est
     else:
-        rho_0 = rho_true 
+        rho_0 = rho_true
 
     if A00_true is None:
         p00_0 = p00_est
     else:
-        p00_0 = A00_true 
+        p00_0 = A00_true
 
     if A10_true is None:
-        p10_0 = p10_est 
+        p10_0 = p10_est
     else:
-        p10_0 = A10_true 
+        p10_0 = A10_true
 
     if A01_true is None:
-        p01_0 = p01_est 
+        p01_0 = p01_est
     else:
-        p01_0 = A01_true 
+        p01_0 = A01_true
 
     if A11_true is None:
-        p11_0 = p11_est 
+        p11_0 = p11_est
     else:
-        p11_0 = A11_true 
+        p11_0 = A11_true
 
 
     # STEP 2: run MCMC to estimate p-vec
@@ -311,7 +316,6 @@ def main():
     init_values = [p00_0, p10_0, p01_0, p11_0, H1_0, H2_0, rho_0, cov_e_coef]
 
     if V is None: # no LD, do regular MCMC
-        print "Running MCMC with rho: %.4f" % rho_true 
         p00, p10, p01, p11, H1, H2, rho, a00_std, a10_std, a01_std, a11_std, H1_std, H2_std, rho_std, rho_first_quantile, rho_third_quantile \
         = run_MCMC(init_values, N1, N2, M, z1, z2, ITS, A00_true, A10_true, A01_true, A11_true, H1_true, H2_true, rho_true, f_chain)
 
@@ -358,13 +362,13 @@ def main():
     f.write("H2_std: %.6g\n" % H2_std)
     f.write("rho_std: %.6g\n" % rho_std)
 
-    # print desnsity 
+    # print desnsity
     a=[(1-p10-p01-p11), p10, p01, p11]
     params = [a, H1, H2, rho, 0]
     try:
         MAP=log_p_pdf_fast(z1, z2, params, M, N1, N2)
-    except: 
-        MAP = 0 
+    except:
+        MAP = 0
     #print "Final density: %.4f" % MAP
     #f.write("Final density: %.4f\n" % MAP)
 
@@ -388,4 +392,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
